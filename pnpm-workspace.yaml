@@ -1,0 +1,5 @@
+# https://pnpm.io/zh/pnpm-workspace_yaml
+packages:
+  - 'packages/*'
+
+catalog:

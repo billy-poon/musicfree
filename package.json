@@ -1,0 +1,19 @@
+{
+    "name": "musicfree",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/billy-poon/musicfree.git"
+    },
+    "scripts": {
+        "extra": "pnpm -F extra",
+        "plugins": "pnpm -F plugins",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "packageManager": "pnpm@10.20.0"
+}
