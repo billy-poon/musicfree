@@ -7,6 +7,12 @@ declare namespace IMusic {
     interface IMusicItem extends IMusicSummary {
         title: string
         artist?: string
+        $?: {
+            downloadData?: {
+                path: string
+                quality: 'low' | 'standard' | 'high' | 'super'
+            }
+        }
     }
 
     interface IDBMusicSheetItem {

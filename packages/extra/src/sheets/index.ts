@@ -1,3 +1,4 @@
+import FileExport from '../assets/FileExport.svg'
 import { createElement, downloadFile } from '../utils/dom'
 import { nextTick } from '../utils/promise'
 import { getFiber } from '../utils/react'
@@ -11,17 +12,27 @@ document.addEventListener('contextmenu', async (e) => {
     }
 })
 
+let prevMenu: HTMLElement | undefined
+
 function showMenu(sheet: IMusic.IDBMusicSheetItem) {
     const menu = document.querySelector('.context-menu--single-column-container')
     if (menu?.checkVisibility()) {
+        if (prevMenu != null) {
+            prevMenu.parentElement?.removeChild(prevMenu)
+        }
+
         const item = createElement(`
             <div class="menu-item" role="button" style="height: 32px;">
-                <div class="menu-item-icon"></div>
+                <div class="menu-item-icon">
+                    ${FileExport}
+                </div>
                 <span>导出歌单</span>
             </div>
         `)
         item.onclick = () => exportMusicSheet(sheet)
         menu.append(item)
+
+        prevMenu = item
     }
 }
 
