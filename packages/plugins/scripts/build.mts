@@ -56,7 +56,9 @@ async function main() {
         const output = path.join(__dirname, '../dist/plugins.json')
         writeFileSync(output, json)
 
-        console.log('\n✓ [%d] plugin(s) registered:\n  ', plugins.length, output)
+        console.log('\n✓ [%d] plugins registered:\n  ', plugins.length, output)
+    } else {
+        console.warn('\n✗ no plugins registered.')
     }
 
 }
