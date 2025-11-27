@@ -10,6 +10,7 @@
     "scripts": {
         "extra": "pnpm -F extra",
         "plugins": "pnpm -F plugins",
+        "build": "pnpm -F plugins build && pnpm -F extra build",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
