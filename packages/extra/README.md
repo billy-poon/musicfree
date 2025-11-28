@@ -10,51 +10,51 @@
 > 在 MusicFree v0.0.8 下测试通过，其他版本可能需要自行摸索
 
 + 拷贝以下代码保存为 `patch.sh` 文件，放置到程序目录下
-    ```bash
-    #!/bin/bash
+  ```bash
+  #!/bin/bash
 
-    DAY=$(date +"%Y%m%d_%H%M")
+  DAY=$(date +"%Y%m%d_%H%M")
 
-    APP="$1"
-    if [ -z $APP ]; then
-        APP=.
-    fi
+  APP="$1"
+  if [ -z $APP ]; then
+      APP=.
+  fi
 
-    WWW="$APP/resources/app/.webpack/renderer/main_window"
-    if ! [ -d $WWW ]; then
-        echo 'Directory not found: ' $WWW
-        exit 1
-    fi
+  WWW="$APP/resources/app/.webpack/renderer/main_window"
+  if ! [ -d $WWW ]; then
+      echo 'Directory not found: ' $WWW
+      exit 1
+  fi
 
-    WWW=$(realpath "$WWW")
+  WWW=$(realpath "$WWW")
 
-    pushd "$WWW" > /dev/null
+  pushd "$WWW" > /dev/null
 
-    if ! [ -f index.html-original ]; then
-        cp -fv index.html index.html-original
-    fi
+  if ! [ -f index.html-original ]; then
+      cp -fv index.html index.html-original
+  fi
 
-    if ! [ -f index.js-original ]; then
-        cp -fv index.js index.js-original
-    fi
+  if ! [ -f index.js-original ]; then
+      cp -fv index.js index.js-original
+  fi
 
-    URL=$2
-    if [ -z $URL ]; then
-        URL=https://raw.githubusercontent.com/billy-poon/musicfree/refs/heads/master/packages/extra/dist/extra.js
-    fi
+  URL=$2
+  if [ -z $URL ]; then
+      URL=https://billy-poon.github.io/musicfree/packages/extra/dist/extra.js
+  fi
 
-    sed -e "s|</body>|<script src='$URL'></script>&|" "$WWW/index.html" index.html-original > index.html
+  sed -e "s|</body>|<script src='$URL'></script>&|" "$WWW/index.html" index.html-original > index.html
 
-    sed -e 's|t.ee=new a.default,|window.$downloaderEmitter=&|' "$WWW/index.js" index.js-original > index.js
+  sed -e 's|t.ee=new a.default,|window.$downloaderEmitter=&|' "$WWW/index.js" index.js-original > index.js
 
-    popd > /dev/null
-    ```
+  popd > /dev/null
+  ```
 + 运行 `patch.sh` 脚本，在程序启动时加载额外的代码
-    ```bash
-    chmod +x ./patch.sh
+  ```bash
+  chmod +x ./patch.sh
 
-    ./patch.sh
-    ```
+  ./patch.sh
+  ```
 
 ## 歌单导出为 JSON 文件
 

@@ -380,7 +380,7 @@ var plugin = {
   platform,
   author: "Billy Poon",
   version: "0.0.1",
-  srcUrl: "https://raw.githubusercontent.com/billy-poon/musicfree/refs/heads/master/packages/plugins/dist/gequbao.js",
+  srcUrl: "https://billy-poon.github.io/musicfree/packages/plugins/dist/gequbao.js",
   getTopLists() {
     return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
       return _regenerator().w(function (_context) {

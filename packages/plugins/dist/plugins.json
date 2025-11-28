@@ -2,12 +2,12 @@
   "desc": "MusicFree Plugins by Billy Poon",
   "plugins": [
     {
-      "url": "https://raw.githubusercontent.com/billy-poon/musicfree/refs/heads/master/packages/plugins/dist/gequbao.js",
+      "url": "https://billy-poon.github.io/musicfree/packages/plugins/dist/gequbao.js",
       "name": "歌曲宝",
       "version": "0.0.1"
     },
     {
-      "url": "https://raw.githubusercontent.com/billy-poon/musicfree/refs/heads/master/packages/plugins/dist/gequhai.js",
+      "url": "https://billy-poon.github.io/musicfree/packages/plugins/dist/gequhai.js",
       "name": "歌曲海",
       "version": "0.0.1"
     }
