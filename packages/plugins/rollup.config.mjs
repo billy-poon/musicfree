@@ -57,7 +57,8 @@ const plugins = [
         exclude: 'node_modules/**',
         babelHelpers: 'bundled',
         targets: {
-            chrome: '46'
+            // chrome: '46',
+            android: 45,
         },
     }),
     // terser(),

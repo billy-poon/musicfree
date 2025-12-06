@@ -18,7 +18,7 @@ export function createHttp(baseURL: string, config?: AxiosRequestConfig) {
     }
 
     const http = axios.create(options)
-    const cookieJar = new CookeJar()
+    const cookieJar = new CookieJar()
     http.interceptors.request.use((config) => {
         if (config.headers?.Cookie === undefined) {
             const cookie = cookieJar.get()
@@ -91,7 +91,7 @@ export function createHttp(baseURL: string, config?: AxiosRequestConfig) {
     return result
 }
 
-class CookeJar {
+class CookieJar {
     private dict: Record<string, string> = {}
 
     set(cookies?: string[]) {

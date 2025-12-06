@@ -12,6 +12,9 @@ function _arrayLikeToArray(r, a) {
 function _arrayWithHoles(r) {
   if (Array.isArray(r)) return r;
 }
+function _arrayWithoutHoles(r) {
+  if (Array.isArray(r)) return _arrayLikeToArray(r);
+}
 function asyncGeneratorStep(n, t, e, r, o, a, c) {
   try {
     var i = n[a](c),
@@ -36,6 +39,20 @@ function _asyncToGenerator(n) {
       _next(void 0);
     });
   };
+}
+function _classCallCheck(a, n) {
+  if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function");
+}
+function _defineProperties(e, r) {
+  for (var t = 0; t < r.length; t++) {
+    var o = r[t];
+    o.enumerable = o.enumerable || false, o.configurable = true, "value" in o && (o.writable = true), Object.defineProperty(e, _toPropertyKey(o.key), o);
+  }
+}
+function _createClass(e, r, t) {
+  return r && _defineProperties(e.prototype, r), Object.defineProperty(e, "prototype", {
+    writable: false
+  }), e;
 }
 function _defineProperty(e, r, t) {
   return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
@@ -77,6 +94,9 @@ function _iterableToArrayLimit(r, l) {
 }
 function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 function ownKeys(e, r) {
   var t = Object.keys(e);
@@ -213,6 +233,9 @@ function _slicedToArray(r, e) {
 function _toArray(r) {
   return _arrayWithHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableRest();
 }
+function _toConsumableArray(r) {
+  return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread();
+}
 function _toPrimitive(t, r) {
   if ("object" != typeof t || !t) return t;
   var e = t[Symbol.toPrimitive];
@@ -256,53 +279,63 @@ var __defNormalProp$1 = function __defNormalProp(obj, key, value) {
 var __publicField$1 = function __publicField(obj, key, value) {
   return __defNormalProp$1(obj, _typeof(key) !== "symbol" ? key + "" : key, value);
 };
-class Cache {
-  constructor() {
+var Cache = /*#__PURE__*/function () {
+  function Cache() {
     var size = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100;
+    _classCallCheck(this, Cache);
     this.size = size;
     __publicField$1(this, "items", []);
   }
-  find(key) {
-    var index = this.items.findIndex(function (x) {
-      return x.key === key;
-    });
-    return index < 0 ? null : {
-      index,
-      item: this.items[index]
-    };
-  }
-  get(key) {
-    var reset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-    var entry = this.find(key);
-    if (entry == null) {
+  return _createClass(Cache, [{
+    key: "find",
+    value: function find(key) {
+      var index = this.items.findIndex(function (x) {
+        return x.key === key;
+      });
+      return index < 0 ? null : {
+        index,
+        item: this.items[index]
+      };
+    }
+  }, {
+    key: "get",
+    value: function get(key) {
+      var reset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+      var entry = this.find(key);
+      if (entry == null) {
+        return null;
+      }
+      var result = entry.item.value;
+      if (reset) {
+        this.items.splice(entry.index, 1);
+        this.items.push(entry.item);
+      }
+      return result;
+    }
+  }, {
+    key: "set",
+    value: function set(key, value) {
+      this.remove(key);
+      this.items.push({
+        key,
+        value
+      });
+      if (this.items.length > this.size) {
+        this.items.shift();
+      }
+    }
+  }, {
+    key: "remove",
+    value: function remove(key) {
+      var entry = this.find(key);
+      if (entry != null) {
+        this.items.splice(entry.index, 1);
+        return entry.item.value;
+      }
       return null;
     }
-    var result = entry.item.value;
-    if (reset) {
-      this.items.splice(entry.index, 1);
-      this.items.push(entry.item);
-    }
-    return result;
-  }
-  set(key, value) {
-    this.remove(key);
-    this.items.push({
-      key,
-      value
-    });
-    if (this.items.length > this.size) {
-      this.items.shift();
-    }
-  }
-  remove(key) {
-    var entry = this.find(key);
-    if (entry != null) {
-      this.items.splice(entry.index, 1);
-      return entry.item.value;
-    }
-    return null;
-  }
-}
+  }]);
+}();
 
 function loadHTML(html) {
   return cheerio.load(html);
@@ -349,7 +382,7 @@ function createHttp(baseURL, config) {
     baseURL
   });
   var http = axios.create(options);
-  var cookieJar = new CookeJar();
+  var cookieJar = new CookieJar();
   http.interceptors.request.use(function (config2) {
     var _config2$headers;
     if (((_config2$headers = config2.headers) === null || _config2$headers === void 0 ? void 0 : _config2$headers.Cookie) === void 0) {
@@ -418,7 +451,7 @@ function createHttp(baseURL, config) {
       while (1) switch (_context.n) {
         case 0:
           _context.n = 1;
-          return request(..._args);
+          return request.apply(void 0, _args);
         case 1:
           res = _context.v;
           return _context.a(2, res.data);
@@ -427,41 +460,49 @@ function createHttp(baseURL, config) {
   }));
   return result;
 }
-class CookeJar {
-  constructor() {
+var CookieJar = /*#__PURE__*/function () {
+  function CookieJar() {
+    _classCallCheck(this, CookieJar);
     __publicField(this, "dict", {});
   }
-  set(cookies) {
-    var _this = this;
-    (cookies !== null && cookies !== void 0 ? cookies : []).forEach(function (x) {
-      var _x$split = x.split(";", 2),
-        _x$split2 = _slicedToArray(_x$split, 1),
-        kv = _x$split2[0];
-      var _kv$split = kv.split("=", 2),
-        _kv$split2 = _slicedToArray(_kv$split, 2),
-        k = _kv$split2[0],
-        v = _kv$split2[1];
-      if (v != null) {
-        _this.dict[k] = v;
-      }
-    });
-  }
-  get() {
-    var items = Object.entries(this.dict);
-    if (items.length > 0) {
-      return items.map(function (_ref2) {
-        var _ref3 = _slicedToArray(_ref2, 2),
-          k = _ref3[0],
-          v = _ref3[1];
-        return `${k}=${v}`;
-      }).join("; ");
+  return _createClass(CookieJar, [{
+    key: "set",
+    value: function set(cookies) {
+      var _this = this;
+      (cookies !== null && cookies !== void 0 ? cookies : []).forEach(function (x) {
+        var _x$split = x.split(";", 2),
+          _x$split2 = _slicedToArray(_x$split, 1),
+          kv = _x$split2[0];
+        var _kv$split = kv.split("=", 2),
+          _kv$split2 = _slicedToArray(_kv$split, 2),
+          k = _kv$split2[0],
+          v = _kv$split2[1];
+        if (v != null) {
+          _this.dict[k] = v;
+        }
+      });
     }
-    return null;
-  }
-  clear() {
-    this.dict = {};
-  }
-}
+  }, {
+    key: "get",
+    value: function get() {
+      var items = Object.entries(this.dict);
+      if (items.length > 0) {
+        return items.map(function (_ref2) {
+          var _ref3 = _slicedToArray(_ref2, 2),
+            k = _ref3[0],
+            v = _ref3[1];
+          return `${k}=${v}`;
+        }).join("; ");
+      }
+      return null;
+    }
+  }, {
+    key: "clear",
+    value: function clear() {
+      this.dict = {};
+    }
+  }]);
+}();
 
 function isMusicSheet(val) {
   var _ref = val !== null && val !== void 0 ? val : {},
@@ -540,7 +581,7 @@ var plugin = {
               data: [{
                 id: url,
                 title: "飙升榜"
-              }, ...items]
+              }].concat(_toConsumableArray(items))
             }]);
         }
       }, _callee2);
@@ -774,7 +815,7 @@ var plugin = {
   },
   importMusicSheet(urlLike) {
     return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee1() {
-      var data, _data$musicList, sheet, url, page, pageURL, pageSheet;
+      var data, _data$musicList, sheet, url, page, pageURL, pageSheet, _sheet$data;
       return _regenerator().w(function (_context1) {
         while (1) switch (_context1.n) {
           case 0:
@@ -814,7 +855,7 @@ var plugin = {
           case 5:
             pageSheet = _context1.v;
             if (pageSheet !== null && pageSheet !== void 0 && pageSheet.data) {
-              sheet.data.push(...pageSheet.data);
+              (_sheet$data = sheet.data).push.apply(_sheet$data, _toConsumableArray(pageSheet.data));
             }
             if (!(pageSheet == null || pageSheet.isEnd)) {
               _context1.n = 6;
