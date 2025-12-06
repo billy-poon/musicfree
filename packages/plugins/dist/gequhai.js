@@ -59,7 +59,10 @@ function _iterableToArrayLimit(r, l) {
       f = true,
       o = false;
     try {
-      if (i = (t = t.call(r)).next, 0 === l) ; else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
+      if (i = (t = t.call(r)).next, 0 === l) {
+        if (Object(t) !== t) return;
+        f = !1;
+      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
     } catch (r) {
       o = true, n = r;
     } finally {
@@ -302,6 +305,18 @@ function shallowMerge(obj) {
   return result;
 }
 
+var __defProp = Object.defineProperty;
+var __defNormalProp = function __defNormalProp(obj, key, value) {
+  return key in obj ? __defProp(obj, key, {
+    enumerable: true,
+    configurable: true,
+    writable: true,
+    value
+  }) : obj[key] = value;
+};
+var __publicField = function __publicField(obj, key, value) {
+  return __defNormalProp(obj, _typeof(key) !== "symbol" ? key + "" : key, value);
+};
 var USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0";
 function createHttp(baseURL, config) {
   var options = _objectSpread2(_objectSpread2({}, config), {}, {
@@ -311,6 +326,27 @@ function createHttp(baseURL, config) {
     baseURL
   });
   var http = axios.create(options);
+  var cookieJar = new CookeJar();
+  http.interceptors.request.use(function (config2) {
+    var _config2$headers;
+    if (((_config2$headers = config2.headers) === null || _config2$headers === void 0 ? void 0 : _config2$headers.Cookie) === void 0) {
+      var cookie = cookieJar.get();
+      if (cookie != null) {
+        config2.headers = _objectSpread2(_objectSpread2({}, config2.headers), {}, {
+          "Cookie": cookie
+        });
+      }
+    }
+    return config2;
+  });
+  http.interceptors.response.use(function (res) {
+    cookieJar.set(res.headers["set-cookie"]);
+    return res;
+  }, function (err) {
+    var _err$response;
+    cookieJar.set(err === null || err === void 0 || (_err$response = err.response) === null || _err$response === void 0 || (_err$response = _err$response.headers) === null || _err$response === void 0 ? void 0 : _err$response["set-cookie"]);
+    throw err;
+  });
   var referer;
   function request(_x, _x2, _x3) {
     return _request.apply(this, arguments);
@@ -351,6 +387,7 @@ function createHttp(baseURL, config) {
     return _request.apply(this, arguments);
   }
   var result = request;
+  result.baseURL = baseURL;
   result.raw = /*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
     var res,
       _args = arguments;
@@ -366,6 +403,41 @@ function createHttp(baseURL, config) {
     }, _callee);
   }));
   return result;
+}
+class CookeJar {
+  constructor() {
+    __publicField(this, "dict", {});
+  }
+  set(cookies) {
+    var _this = this;
+    (cookies !== null && cookies !== void 0 ? cookies : []).forEach(function (x) {
+      var _x$split = x.split(";", 2),
+        _x$split2 = _slicedToArray(_x$split, 1),
+        kv = _x$split2[0];
+      var _kv$split = kv.split("=", 2),
+        _kv$split2 = _slicedToArray(_kv$split, 2),
+        k = _kv$split2[0],
+        v = _kv$split2[1];
+      if (v != null) {
+        _this.dict[k] = v;
+      }
+    });
+  }
+  get() {
+    var items = Object.entries(this.dict);
+    if (items.length > 0) {
+      return items.map(function (_ref2) {
+        var _ref3 = _slicedToArray(_ref2, 2),
+          k = _ref3[0],
+          v = _ref3[1];
+        return `${k}=${v}`;
+      }).join("; ");
+    }
+    return null;
+  }
+  clear() {
+    this.dict = {};
+  }
 }
 
 function isMusicSheet(val) {
@@ -436,25 +508,14 @@ var plugin = {
   },
   getTopListDetail(topListItem, page) {
     return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
-      var url, sheet, _ref, isEnd, title, _ref$data, data, _t;
+      var sheet, _ref, isEnd, title, _ref$data, data;
       return _regenerator().w(function (_context2) {
         while (1) switch (_context2.n) {
           case 0:
-            url = topListItem.id;
-            if (!(typeof url === "string")) {
-              _context2.n = 2;
-              break;
-            }
             _context2.n = 1;
-            return requestSheet(url, page);
+            return requestSheet(topListItem.id, page);
           case 1:
-            _t = _context2.v;
-            _context2.n = 3;
-            break;
-          case 2:
-            _t = null;
-          case 3:
-            sheet = _t;
+            sheet = _context2.v;
             _ref = sheet !== null && sheet !== void 0 ? sheet : {}, isEnd = _ref.isEnd, title = _ref.title, _ref$data = _ref.data, data = _ref$data === void 0 ? [] : _ref$data;
             return _context2.a(2, _objectSpread2(_objectSpread2({}, topListItem), {}, {
               isEnd,
@@ -467,17 +528,12 @@ var plugin = {
   },
   getMusicInfo(musicBase) {
     return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
-      var url, result;
+      var result;
       return _regenerator().w(function (_context3) {
         while (1) switch (_context3.n) {
           case 0:
-            url = musicBase.id;
-            if (!(typeof url === "string")) {
-              _context3.n = 2;
-              break;
-            }
             _context3.n = 1;
-            return requestMusic(url);
+            return requestMusic(musicBase.id);
           case 1:
             result = _context3.v;
             if (!(result != null)) {
@@ -493,7 +549,7 @@ var plugin = {
   },
   getMediaSource(mediaItem) {
     return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
-      var url, id, music;
+      var url, music;
       return _regenerator().w(function (_context4) {
         while (1) switch (_context4.n) {
           case 0:
@@ -502,13 +558,8 @@ var plugin = {
               _context4.n = 2;
               break;
             }
-            id = mediaItem.id;
-            if (!(typeof id === "string")) {
-              _context4.n = 2;
-              break;
-            }
             _context4.n = 1;
-            return requestMusic(id);
+            return requestMusic(mediaItem.id);
           case 1:
             music = _context4.v;
             if ((music === null || music === void 0 ? void 0 : music.url) != null) {
@@ -525,7 +576,7 @@ var plugin = {
   },
   getLyric(musicItem) {
     return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
-      var rawLrc, id, music;
+      var rawLrc, music;
       return _regenerator().w(function (_context5) {
         while (1) switch (_context5.n) {
           case 0:
@@ -534,13 +585,8 @@ var plugin = {
               _context5.n = 2;
               break;
             }
-            id = musicItem.id;
-            if (!(typeof id === "string")) {
-              _context5.n = 2;
-              break;
-            }
             _context5.n = 1;
-            return requestMusic(id);
+            return requestMusic(musicItem.id);
           case 1:
             music = _context5.v;
             if ((music === null || music === void 0 ? void 0 : music.rawLrc) != null) {

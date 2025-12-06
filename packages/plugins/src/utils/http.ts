@@ -18,6 +18,30 @@ export function createHttp(baseURL: string, config?: AxiosRequestConfig) {
     }
 
     const http = axios.create(options)
+    const cookieJar = new CookeJar()
+    http.interceptors.request.use((config) => {
+        if (config.headers?.Cookie === undefined) {
+            const cookie = cookieJar.get()
+            if (cookie != null) {
+                config.headers = {
+                    ...config.headers,
+                    'Cookie': cookie
+                }
+            }
+        }
+
+        return config
+    })
+    http.interceptors.response.use(
+        (res) => {
+            cookieJar.set(res.headers['set-cookie'])
+            return res
+        },
+        (err) => {
+            cookieJar.set(err?.response?.headers?.['set-cookie'])
+            throw err
+        },
+    )
 
     let referer: string | undefined
     async function request<T = any>(url: string, data?: any, config?: AxiosRequestConfig | Method) {
@@ -54,12 +78,42 @@ export function createHttp(baseURL: string, config?: AxiosRequestConfig) {
 
     type Request = typeof request
     const result = request as Request & {
+        baseURL: string
         raw: <T>(...args: Parameters<Request>) => Promise<T>
     }
+
+    result.baseURL = baseURL
     result.raw = async (...args) => {
         const res = await request(...args)
         return res.data
     }
 
     return result
+}
+
+class CookeJar {
+    private dict: Record<string, string> = {}
+
+    set(cookies?: string[]) {
+        (cookies ?? []).forEach(x => {
+            const [kv] = x.split(';', 2)
+            const [k, v] = kv.split('=', 2)
+            if (v != null) {
+                this.dict[k] = v
+            }
+        })
+    }
+
+    get() {
+        const items = Object.entries(this.dict)
+        if (items.length > 0) {
+            return items.map(([k, v]) => `${k}=${v}`).join('; ')
+        }
+
+        return null
+    }
+
+    clear() {
+        this.dict = {}
+    }
 }

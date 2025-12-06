@@ -2,6 +2,11 @@
   "desc": "MusicFree Plugins by Billy Poon",
   "plugins": [
     {
+      "url": "https://billy-poon.github.io/musicfree/packages/plugins/dist/2t58.js",
+      "name": "爱听音乐",
+      "version": "0.0.1"
+    },
+    {
       "url": "https://billy-poon.github.io/musicfree/packages/plugins/dist/gequbao.js",
       "name": "歌曲宝",
       "version": "0.0.1"
