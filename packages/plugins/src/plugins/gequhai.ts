@@ -60,10 +60,7 @@ const plugin = {
     },
 
     async getTopListDetail(topListItem, page?) {
-        const { id: url } = topListItem
-        const sheet = typeof url === 'string'
-            ? await requestSheet(url, page)
-            : null
+        const sheet = await requestSheet(topListItem.id, page)
 
         const { isEnd, title, data = [] } = sheet ?? {}
         return {
@@ -75,14 +72,11 @@ const plugin = {
     },
 
     async getMusicInfo(musicBase) {
-        const { id: url } = musicBase
-        if (typeof url === 'string') {
-            const result = await requestMusic(url as string)
-            if (result != null) {
-                return {
-                    ...musicBase,
-                    ...result,
-                }
+        const result = await requestMusic(musicBase.id)
+        if (result != null) {
+            return {
+                ...musicBase,
+                ...result,
             }
         }
 
@@ -92,12 +86,9 @@ const plugin = {
     async getMediaSource(mediaItem) {
         let { url } = mediaItem
         if (url == null) {
-            const { id } = mediaItem
-            if (typeof id === 'string') {
-                const music = await requestMusic(id)
-                if (music?.url != null) {
-                    url = music.url
-                }
+            const music = await requestMusic(mediaItem.id)
+            if (music?.url != null) {
+                url = music.url
             }
         }
 
@@ -109,12 +100,9 @@ const plugin = {
     async getLyric(musicItem) {
         let { rawLrc } = musicItem
         if (rawLrc == null) {
-            const { id } = musicItem
-            if (typeof id === 'string') {
-                const music = await requestMusic(id)
-                if (music?.rawLrc != null) {
-                    rawLrc = music.rawLrc
-                }
+            const music = await requestMusic(musicItem.id)
+            if (music?.rawLrc != null) {
+                rawLrc = music.rawLrc
             }
         }
 

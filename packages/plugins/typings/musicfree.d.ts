@@ -65,7 +65,7 @@ declare namespace MusicFree {
 
     interface IMediaItem {
         platform?: string
-        id: string | number
+        id: string// | number
     }
     interface IMusicItem extends IMediaItem {
         title: string
