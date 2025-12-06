@@ -451,7 +451,7 @@ var platform = "歌曲海";
 var plugin = {
   platform,
   author: "Billy Poon",
-  version: "0.0.1",
+  version: "0.0.2",
   srcUrl: "https://billy-poon.github.io/musicfree/packages/plugins/dist/gequhai.js",
   getTopLists() {
     return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
