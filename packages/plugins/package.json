@@ -10,6 +10,7 @@
     "scripts": {
         "dev": "tsx src/main.ts",
         "build": "rollup -c rollup.config.mjs && tsx scripts/build.mts",
+        "build:local": "NODE_ENV=local npm run build",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],

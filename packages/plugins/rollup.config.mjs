@@ -1,6 +1,6 @@
 import babel from '@rollup/plugin-babel'
 import replace from '@rollup/plugin-replace'
-import 'dotenv/config'
+import { config } from 'dotenv'
 import { globSync } from 'fs'
 import path from 'path'
 import { defineConfig } from 'rollup'
@@ -8,6 +8,12 @@ import esbuild from 'rollup-plugin-esbuild'
 import url from 'url'
 import pkg from './package.json' with { type: 'json' }
 
+config({
+    path: [
+        `.env-${process.env.NODE_ENV}`,
+        '.env',
+    ]
+})
 // import terser from '@rollup/plugin-terser'
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
