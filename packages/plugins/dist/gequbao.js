@@ -482,7 +482,7 @@ var platform = "歌曲宝";
 var plugin = {
   platform,
   author: "Billy Poon",
-  version: "0.0.3",
+  version: "0.0.4",
   srcUrl: "https://billy-poon.github.io/musicfree/packages/plugins/dist/gequbao.js",
   getTopLists() {
     return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {

@@ -555,7 +555,7 @@ var platform = "爱听音乐";
 var plugin = {
   platform,
   author: "Billy Poon",
-  version: "0.0.3",
+  version: "0.0.4",
   srcUrl: "https://billy-poon.github.io/musicfree/packages/plugins/dist/2t58.js",
   getTopLists() {
     return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
@@ -749,7 +749,7 @@ var plugin = {
       return _regenerator().w(function (_context9) {
         while (1) switch (_context9.n) {
           case 0:
-            pageURL = page != null ? getPageURL(tag.id, page) : tag.id;
+            pageURL = page != null ? getPageURL(tag.id !== "" ? tag.id : "/playtype/index.html", page) : tag.id;
             if (!(pageURL != null)) {
               _context9.n = 2;
               break;
