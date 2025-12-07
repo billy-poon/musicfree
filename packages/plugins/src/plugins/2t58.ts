@@ -145,7 +145,7 @@ const plugin = {
 
     async getRecommendSheetsByTag(tag, page) {
         const pageURL = page != null
-            ? getPageURL(tag.id, page)
+            ? getPageURL(tag.id !== '' ? tag.id : '/playtype/index.html', page)
             : tag.id
         if (pageURL != null) {
             const html = await requestHttp(pageURL)
